@@ -1,8 +1,5 @@
 import heapq
 
-INF = float("inf")
-
-
 def manhattan(a, b):
     return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
@@ -24,6 +21,7 @@ def astar(start, goal, grid):
     while open_heap:
         f, neg_g, _, current = heapq.heappop(open_heap)
 
+        # ⭐ ADD THIS CHECK - prevents processing same cell twice
         if current in closed:
             continue
 
@@ -61,4 +59,3 @@ def astar(start, goal, grid):
                     )
 
     return None, expanded
-

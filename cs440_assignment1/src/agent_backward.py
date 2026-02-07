@@ -23,8 +23,15 @@ class AgentBackward:
 
     def run(self):
         total_expanded = 0
+        iterations = 0  # ⭐ ADD THIS
 
         while self.pos != self.goal:
+            iterations += 1  # ⭐ ADD THIS
+            
+            # ⭐ ADD SAFETY CHECK
+            if iterations > 10000:
+                return False, total_expanded
+            
             path, expanded = astar_backward(self.pos, self.goal, self.knowledge)
             total_expanded += expanded
 
