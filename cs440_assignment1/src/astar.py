@@ -21,7 +21,6 @@ def astar(start, goal, grid):
     while open_heap:
         f, neg_g, _, current = heapq.heappop(open_heap)
 
-        # ⭐ ADD THIS CHECK - prevents processing same cell twice
         if current in closed:
             continue
 

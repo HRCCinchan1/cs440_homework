@@ -5,18 +5,15 @@ from agent_adaptive import AgentAdaptive
 import os
 import time
 
-# =========================
-# CONFIGURATION
-# =========================
+
+# Creating 50 grids 
 NUM_GRIDS = 50
 START = (0, 0)
 GOAL = (100, 100)
-
 os.makedirs("results", exist_ok=True)
 
-# =========================
-# FORWARD vs BACKWARD A*
-# =========================
+
+# 2 & 3: Implementation of Repeated Forward vs Backward A*
 print(f"Running Forward vs Backward A* on {NUM_GRIDS} grids...")
 print("=" * 60)
 
@@ -28,7 +25,7 @@ with open("results/forward_vs_backward.txt", "w") as f:
 
         grid = load_grid(f"maps/grid_{i}.npy")
 
-        # ---------- Forward A* ----------
+        # 2. Repeated Forward A* 
         print("  Running forward...", end=" ", flush=True)
         agent_fwd = Agent(grid, START, GOAL)
         start_time = time.time()
@@ -36,24 +33,21 @@ with open("results/forward_vs_backward.txt", "w") as f:
         fwd_time = time.time() - start_time
         print(f"expanded {expanded_fwd} ({fwd_time:.2f}s)")
 
-        # ---------- Backward A* ----------
+        # Repeated Backward A* 
         print("  Running backward...", end=" ", flush=True)
         agent_bwd = AgentBackward(grid, START, GOAL)
         start_time = time.time()
         _, expanded_bwd = agent_bwd.run()
         bwd_time = time.time() - start_time
         print(f"expanded {expanded_bwd} ({bwd_time:.2f}s)")
-
-        # ---------- Save ----------
         f.write(f"{i},{expanded_fwd},{expanded_bwd}\n")
         f.flush()
 
 print("\n" + "=" * 60)
 print("Forward vs Backward A* experiment complete.")
 
-# =========================
-# ADAPTIVE A*
-# =========================
+
+# 5. Implementation of ADAPTIVE A*
 print("\nRunning Adaptive A* on all grids...")
 print("=" * 60)
 
@@ -77,4 +71,5 @@ with open("results/adaptive_astar.txt", "w") as f:
 
 print("\n" + "=" * 60)
 print("Adaptive A* experiment complete.")
+
 print("ALL EXPERIMENTS FINISHED SUCCESSFULLY.")

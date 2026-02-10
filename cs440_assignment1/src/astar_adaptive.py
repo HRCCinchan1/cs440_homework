@@ -5,11 +5,6 @@ def manhattan(a, b):
 
 
 def astar_adaptive(start, goal, grid, heuristic):
-    """
-    Adaptive A* search.
-    heuristic: dictionary storing learned h-values
-    Returns: (path, expanded, g_values)
-    """
 
     g = {start: 0}
     parent = {}

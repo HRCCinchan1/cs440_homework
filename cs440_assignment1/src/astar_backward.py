@@ -5,10 +5,6 @@ def manhattan(a, b):
 
 
 def astar_backward(start, goal, grid):
-    """
-    A* search from goal -> start
-    Returns path (goal to start) and expanded count
-    """
 
     rows, cols = grid.shape
 

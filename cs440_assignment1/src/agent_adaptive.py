@@ -13,8 +13,6 @@ class AgentAdaptive:
 
         rows, cols = true_grid.shape
         self.knowledge = np.ones((rows, cols), dtype=int)
-
-        # Learned heuristic table
         self.heuristic = {}
 
     def observe(self):
@@ -39,7 +37,6 @@ class AgentAdaptive:
 
             goal_g = g_values[self.goal]
 
-            # Adaptive heuristic update
             for state in g_values:
                 self.heuristic[state] = goal_g - g_values[state]
 

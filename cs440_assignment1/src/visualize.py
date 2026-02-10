@@ -4,11 +4,7 @@ from grid_loader import load_grid
 
 
 def visualize_grid(grid):
-    """
-    Visualize the grid world.
-    White = free cell
-    Black = blocked cell
-    """
+
     plt.figure(figsize=(6, 6))
     plt.imshow(grid, cmap="gray")
     plt.title("Grid World Visualization")
@@ -18,6 +14,5 @@ def visualize_grid(grid):
 
 
 if __name__ == "__main__":
-    # Load one grid and visualize it
-    grid = load_grid("maps/grid_0.npy")
+    grid = load_grid("maps/grid_1.npy")
     visualize_grid(grid)

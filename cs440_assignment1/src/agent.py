@@ -24,12 +24,11 @@ class Agent:
 
     def run(self):
         total_expanded = 0
-        iterations = 0  # ⭐ ADD THIS
+        iterations = 0  
 
         while self.pos != self.goal:
-            iterations += 1  # ⭐ ADD THIS
+            iterations += 1  
             
-            # ⭐ ADD SAFETY CHECK
             if iterations > 10000:
                 print(f"WARNING: Exceeded iteration limit. Expanded {total_expanded} cells.")
                 return False, total_expanded
@@ -38,7 +37,7 @@ class Agent:
             total_expanded += expanded
 
             if path is None:
-                print(f"I cannot reach the target. Expanded {total_expanded} cells.")
+                print(f"Cannot reach the target. Expanded {total_expanded} cells.")
                 return False, total_expanded
 
             for step in path[1:]:

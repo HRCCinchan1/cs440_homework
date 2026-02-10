@@ -52,7 +52,6 @@ def astar_small_g(start, goal, grid):
                     parent[neighbor] = current
                     h = manhattan(neighbor, goal)
                     counter += 1
-                    # tie-break: smaller g preferred
                     heapq.heappush(
                         open_heap,
                         (new_g + h, new_g, counter, neighbor)
