@@ -3,14 +3,12 @@ from astar_backward import astar_backward
 
 BLOCKED = 0
 
-
 class AgentBackward:
     def __init__(self, true_grid, start, goal):
         self.true_grid = true_grid
         self.start = start
         self.goal = goal
         self.pos = start
-
         rows, cols = true_grid.shape
         self.knowledge = np.ones((rows, cols), dtype=int)
 
@@ -31,14 +29,11 @@ class AgentBackward:
             
             if iterations > 10000:
                 return False, total_expanded
-            
             path, expanded = astar_backward(self.pos, self.goal, self.knowledge)
             total_expanded += expanded
 
             if path is None:
                 return False, total_expanded
-
-            
             path = list(reversed(path))
 
             for step in path[1:]:
@@ -47,7 +42,6 @@ class AgentBackward:
                 if self.true_grid[step[0], step[1]] == BLOCKED:
                     self.knowledge[step[0], step[1]] = BLOCKED
                     break
-
                 self.pos = step
 
                 if self.pos == self.goal:

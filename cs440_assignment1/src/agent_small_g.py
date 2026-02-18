@@ -3,14 +3,12 @@ from astar_small_g import astar_small_g
 
 BLOCKED = 0
 
-
 class AgentSmallG:
     def __init__(self, true_grid, start, goal):
         self.true_grid = true_grid
         self.start = start
         self.goal = goal
         self.pos = start
-
         rows, cols = true_grid.shape
         self.knowledge = np.ones((rows, cols), dtype=int)
 
@@ -23,8 +21,14 @@ class AgentSmallG:
 
     def run(self):
         total_expanded = 0
+        iterations = 0
 
         while self.pos != self.goal:
+            iterations += 1
+
+            if iterations > 10000:
+                return False, total_expanded
+
             path, expanded = astar_small_g(self.pos, self.goal, self.knowledge)
             total_expanded += expanded
 

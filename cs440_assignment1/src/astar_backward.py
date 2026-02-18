@@ -7,15 +7,12 @@ def manhattan(a, b):
 def astar_backward(start, goal, grid):
 
     rows, cols = grid.shape
-
     g = {goal: 0}
     parent = {}
-
     open_heap = []
     closed = set()
     expanded = 0
     counter = 0
-
     h_goal = manhattan(goal, start)
     heapq.heappush(open_heap, (h_goal, 0, counter, goal))
 

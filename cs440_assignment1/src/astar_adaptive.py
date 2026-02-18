@@ -12,7 +12,6 @@ def astar_adaptive(start, goal, grid, heuristic):
     closed = set()
     expanded = 0
     counter = 0
-
     h_start = heuristic.get(start, manhattan(start, goal))
     heapq.heappush(open_list, (h_start, 0, counter, start))
 
@@ -33,10 +32,10 @@ def astar_adaptive(start, goal, grid, heuristic):
                 s = parent[s]
             path.append(start)
             path.reverse()
-            return path, expanded, g
+            return path, expanded, g, closed
 
         r, c = current
-        for dr, dc in [(-1,0),(1,0),(0,-1),(0,1)]:
+        for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
             nr, nc = r + dr, c + dc
             if 0 <= nr < grid.shape[0] and 0 <= nc < grid.shape[1]:
                 if grid[nr][nc] == 0:
@@ -55,4 +54,4 @@ def astar_adaptive(start, goal, grid, heuristic):
                         (new_g + h, -new_g, counter, neighbor)
                     )
 
-    return None, expanded, g
+    return None, expanded, g, closed

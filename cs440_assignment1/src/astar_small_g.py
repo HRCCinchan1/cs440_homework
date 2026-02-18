@@ -6,24 +6,20 @@ def manhattan(a, b):
 
 def astar_small_g(start, goal, grid):
     rows, cols = grid.shape
-
     g = {start: 0}
     parent = {}
-
     open_heap = []
     closed = set()
     expanded = 0
     counter = 0
-
     h_start = manhattan(start, goal)
     heapq.heappush(open_heap, (h_start, 0, counter, start))
 
     while open_heap:
-        f, g_val, _, current = heapq.heappop(open_heap)
+        f, pos_g, _, current = heapq.heappop(open_heap)
 
         if current in closed:
             continue
-
         closed.add(current)
         expanded += 1
 
@@ -43,7 +39,6 @@ def astar_small_g(start, goal, grid):
             if 0 <= nr < rows and 0 <= nc < cols:
                 if grid[nr, nc] == 0:
                     continue
-
                 neighbor = (nr, nc)
                 new_g = g[current] + 1
 
@@ -54,7 +49,7 @@ def astar_small_g(start, goal, grid):
                     counter += 1
                     heapq.heappush(
                         open_heap,
-                        (new_g + h, new_g, counter, neighbor)
+                        (new_g + h, +new_g, counter, neighbor) 
                     )
 
     return None, expanded

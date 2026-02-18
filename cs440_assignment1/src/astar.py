@@ -6,10 +6,8 @@ def manhattan(a, b):
 
 def astar(start, goal, grid):
     rows, cols = grid.shape
-
     g = {start: 0}
     parent = {}
-
     open_heap = []
     closed = set()
     expanded = 0
@@ -23,7 +21,6 @@ def astar(start, goal, grid):
 
         if current in closed:
             continue
-
         closed.add(current)
         expanded += 1
 
@@ -43,7 +40,6 @@ def astar(start, goal, grid):
             if 0 <= nr < rows and 0 <= nc < cols:
                 if grid[nr, nc] == 0:
                     continue
-
                 neighbor = (nr, nc)
                 new_g = g[current] + 1
 

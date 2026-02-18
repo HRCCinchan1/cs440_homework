@@ -1,75 +1,114 @@
-from grid_loader import load_grid
-from agent import Agent
-from agent_backward import AgentBackward
-from agent_adaptive import AgentAdaptive
 import os
 import time
+import numpy as np
+from grid_loader import load_grid
+from agent import Agent
+from agent_small_g import AgentSmallG
+from agent_backward import AgentBackward
+from agent_adaptive import AgentAdaptive
 
 
-# Creating 50 grids 
 NUM_GRIDS = 50
-START = (0, 0)
-GOAL = (100, 100)
 os.makedirs("results", exist_ok=True)
 
+def get_start_goal(grid):
+    unblocked = list(zip(*np.where(grid == 1)))
+    if len(unblocked) < 2:
+        return None, None
+    return unblocked[0], unblocked[-1]
 
-# 2 & 3: Implementation of Repeated Forward vs Backward A*
-print(f"Forward vs Backward A* on {NUM_GRIDS} grids")
-print("*" * 60)
+
+def run_agent(agent):
+    start_time = time.time()
+    success, expanded = agent.run()
+    return success, expanded, time.time() - start_time
+
+print("PART 2: Tie-breaking (Large-g vs Small-g)")
+print("=" * 60)
+
+with open("results/tiebreaking.txt", "w") as f:
+    f.write("grid,large_g_expanded,small_g_expanded\n")
+
+    for i in range(NUM_GRIDS):
+        grid = load_grid(f"maps/grid_{i}.npy")
+        start, goal = get_start_goal(grid)
+
+        if start is None:
+            print(f"  Grid {i+1}/{NUM_GRIDS}: skipped (not enough unblocked cells)")
+            f.write(f"{i},0,0\n")
+            continue
+
+        print(f"\n  Grid {i+1}/{NUM_GRIDS}:")
+
+        _, exp_large, t_large = run_agent(Agent(grid, start, goal))
+        print(f"    Large-g: {exp_large} expanded ({t_large:.2f}s)")
+
+        _, exp_small, t_small = run_agent(AgentSmallG(grid, start, goal))
+        print(f"    Small-g: {exp_small} expanded ({t_small:.2f}s)")
+
+        f.write(f"{i},{exp_large},{exp_small}\n")
+        f.flush()
+
+print("\nPart 2 complete.")
+
+
+print("\nPART 3: Repeated Forward A* vs Repeated Backward A*")
+print("=" * 60)
 
 with open("results/forward_vs_backward.txt", "w") as f:
     f.write("grid,forward_expanded,backward_expanded\n")
 
     for i in range(NUM_GRIDS):
-        print(f"\nGrid {i}/{NUM_GRIDS - 1}:")
-
         grid = load_grid(f"maps/grid_{i}.npy")
+        start, goal = get_start_goal(grid)
 
-        # 2. Repeated Forward A* 
-        print("  Running forward A* ", end=" ", flush=True)
-        agent_fwd = Agent(grid, START, GOAL)
-        start_time = time.time()
-        _, expanded_fwd = agent_fwd.run()
-        fwd_time = time.time() - start_time
-        print(f"expanded {expanded_fwd} ({fwd_time:.2f}s)")
+        if start is None:
+            print(f"  Grid {i+1}/{NUM_GRIDS}: skipped (not enough unblocked cells)")
+            f.write(f"{i},0,0\n")
+            continue
 
-        # Repeated Backward A* 
-        print("  Running backward A*", end=" ", flush=True)
-        agent_bwd = AgentBackward(grid, START, GOAL)
-        start_time = time.time()
-        _, expanded_bwd = agent_bwd.run()
-        bwd_time = time.time() - start_time
-        print(f"expanded {expanded_bwd} ({bwd_time:.2f}s)")
-        f.write(f"{i},{expanded_fwd},{expanded_bwd}\n")
+        print(f"\n  Grid {i+1}/{NUM_GRIDS}:")
+
+        _, exp_fwd, t_fwd = run_agent(Agent(grid, start, goal))
+        print(f"    Forward:  {exp_fwd} expanded ({t_fwd:.2f}s)")
+
+        _, exp_bwd, t_bwd = run_agent(AgentBackward(grid, start, goal))
+        print(f"    Backward: {exp_bwd} expanded ({t_bwd:.2f}s)")
+
+        f.write(f"{i},{exp_fwd},{exp_bwd}\n")
         f.flush()
 
-print("\n" + "*" * 60)
-print("Forward vs Backward A* run complete.")
+print("\nPart 3 complete.")
 
 
-# 5. Implementation of ADAPTIVE A*
-print("\nRunning Adaptive A* on all 50 grids...")
-print("*" * 60)
+print("\nPART 5: Repeated Forward A* vs Adaptive A*")
+print("=" * 60)
 
 with open("results/adaptive_astar.txt", "w") as f:
-    f.write("grid,adaptive_expanded\n")
+    f.write("grid,forward_expanded,adaptive_expanded\n")
 
     for i in range(NUM_GRIDS):
-        print(f"\nGrid {i}/{NUM_GRIDS - 1}:")
-
         grid = load_grid(f"maps/grid_{i}.npy")
+        start, goal = get_start_goal(grid)
 
-        print("  Running adaptive A*", end=" ", flush=True)
-        agent_adapt = AgentAdaptive(grid, START, GOAL)
-        start_time = time.time()
-        _, expanded_adapt = agent_adapt.run()
-        adapt_time = time.time() - start_time
-        print(f"expanded {expanded_adapt} ({adapt_time:.2f}s)")
+        if start is None:
+            print(f"  Grid {i+1}/{NUM_GRIDS}: skipped (not enough unblocked cells)")
+            f.write(f"{i},0,0\n")
+            continue
 
-        f.write(f"{i},{expanded_adapt}\n")
+        print(f"\n  Grid {i+1}/{NUM_GRIDS}:")
+
+        _, exp_fwd, t_fwd = run_agent(Agent(grid, start, goal))
+        print(f"    Forward:  {exp_fwd} expanded ({t_fwd:.2f}s)")
+
+        _, exp_adapt, t_adapt = run_agent(AgentAdaptive(grid, start, goal))
+        print(f"    Adaptive: {exp_adapt} expanded ({t_adapt:.2f}s)")
+
+        f.write(f"{i},{exp_fwd},{exp_adapt}\n")
         f.flush()
 
-print("\n" + "*" * 60)
-print("Adaptive A* run complete.")
+print("\nPart 5 complete.")
 
+print("\n" + "=" * 60)
 print("ALL EXPERIMENTS FINISHED SUCCESSFULLY.")
+print("Results saved to results file")

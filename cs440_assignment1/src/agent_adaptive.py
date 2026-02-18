@@ -10,35 +10,40 @@ class AgentAdaptive:
         self.start = start
         self.goal = goal
         self.pos = start
-
         rows, cols = true_grid.shape
         self.knowledge = np.ones((rows, cols), dtype=int)
         self.heuristic = {}
 
     def observe(self):
         r, c = self.pos
-        for dr, dc in [(-1,0),(1,0),(0,-1),(0,1)]:
+        for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
             nr, nc = r + dr, c + dc
             if 0 <= nr < self.true_grid.shape[0] and 0 <= nc < self.true_grid.shape[1]:
                 self.knowledge[nr][nc] = self.true_grid[nr][nc]
 
     def run(self):
         total_expanded = 0
+        iterations = 0
 
         while self.pos != self.goal:
-            path, expanded, g_values = astar_adaptive(
+            iterations += 1
+
+            if iterations > 10000:
+                return False, total_expanded
+
+            path, expanded, g_values, closed_set = astar_adaptive(
                 self.pos, self.goal, self.knowledge, self.heuristic
             )
-
             total_expanded += expanded
 
             if path is None:
                 return False, total_expanded
-
-            goal_g = g_values[self.goal]
-
-            for state in g_values:
-                self.heuristic[state] = goal_g - g_values[state]
+            goal_g = g_values.get(self.goal, None)
+            
+            if goal_g is not None:
+                for state in closed_set:
+                    if state in g_values:
+                        self.heuristic[state] = goal_g - g_values[state]
 
             for step in path[1:]:
                 self.observe()
@@ -53,4 +58,3 @@ class AgentAdaptive:
                     return True, total_expanded
 
         return True, total_expanded
-

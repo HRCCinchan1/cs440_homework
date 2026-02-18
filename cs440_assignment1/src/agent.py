@@ -11,7 +11,6 @@ class Agent:
         self.start = start
         self.goal = goal
         self.pos = start
-
         rows, cols = true_grid.shape
         self.knowledge = np.ones((rows, cols), dtype=int)
 
