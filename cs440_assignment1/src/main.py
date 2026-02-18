@@ -1,6 +1,7 @@
 import os
 import time
 import numpy as np
+from collections import deque
 from grid_loader import load_grid
 from agent import Agent
 from agent_small_g import AgentSmallG
@@ -11,12 +12,37 @@ from agent_adaptive import AgentAdaptive
 NUM_GRIDS = 50
 os.makedirs("results", exist_ok=True)
 
+
+def get_reachable_region(grid, start):
+    """BFS from start — returns all cells reachable from start."""
+    visited = []
+    seen = set()
+    queue = deque([start])
+    while queue:
+        cur = queue.popleft()
+        if cur in seen:
+            continue
+        seen.add(cur)
+        visited.append(cur)
+        r, c = cur
+        for dr, dc in [(-1,0),(1,0),(0,-1),(0,1)]:
+            nr, nc = r+dr, c+dc
+            if 0 <= nr < grid.shape[0] and 0 <= nc < grid.shape[1]:
+                if grid[nr,nc] == 1 and (nr,nc) not in seen:
+                    queue.append((nr,nc))
+    return visited
+
+
 def get_start_goal(grid):
+    """Pick start and goal guaranteed to be in the same connected component."""
     unblocked = list(zip(*np.where(grid == 1)))
     if len(unblocked) < 2:
         return None, None
-    return unblocked[0], unblocked[-1]
-
+    start = unblocked[0]
+    reachable = get_reachable_region(grid, start)
+    if len(reachable) < 2:
+        return None, None
+    return start, reachable[-1]
 
 def run_agent(agent):
     start_time = time.time()
@@ -80,7 +106,6 @@ with open("results/forward_vs_backward.txt", "w") as f:
 
 print("\nPart 3 complete.")
 
-
 print("\nPART 5: Repeated Forward A* vs Adaptive A*")
 print("=" * 60)
 
@@ -111,4 +136,4 @@ print("\nPart 5 complete.")
 
 print("\n" + "=" * 60)
 print("ALL EXPERIMENTS FINISHED SUCCESSFULLY.")
-print("Results saved to results file")
+print("Results saved to results/tiebreaking.txt, forward_vs_backward.txt, adaptive_astar.txt")
